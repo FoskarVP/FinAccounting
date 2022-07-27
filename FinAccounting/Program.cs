@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using FinAccounting;
 using FinAccounting.Database;
 /*using MailKit.Net.Imap;
 using MailKit;
@@ -9,6 +10,7 @@ MailClient mailClient = new(new MailSettings(), DateTime.Parse("2022-01-01"));
 var a = mailClient.GetReceiptListFromEMail();*/
 
 Console.WriteLine("Hello, World!");
+AppSettings.SetSettings("config.json");
 
 Product product = new Product() { title = "Test" };
 using (DatabaseContext db = new DatabaseContext())
