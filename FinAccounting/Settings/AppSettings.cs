@@ -39,11 +39,11 @@ namespace FinAccounting
             }
             catch (NullReferenceException ex)
             {
-                Console.WriteLine($"Ошибка файла конфигурации: не найден один объект \"{ex.Message}\".");
+                Console.WriteLine($"Ошибка файла конфигурации: не найден объект \"{ex.Message}\".");
             }
             catch (FileLoadException ex)
             {
-                Console.WriteLine($"Ошибка файла конфигурации: не найден один объект \"{ex.Message}\".");
+                Console.WriteLine($"Ошибка файла конфигурации: \"{ex.Message}\".");
             }
             catch (Exception ex)
             {
