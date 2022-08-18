@@ -1,13 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using FinAccounting.Database.Tables;
+using FinAccounting.APIReceipt;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinAccounting.Database
 {
     public static class DatabaseProvider
     {
+        public static void SaveReceipt(APIReceipt.Receipt receipt)
+        {
+            Tables.Receipt receiptEntity = new()
+            {
+                Datetime = receipt.DateTime.ToUniversalTime(),
+                Shop = new() { Title = receipt.Organization },
+                Total = receipt.Total
+            };
+
+            foreach (var item in receipt.Items)
+            {
+                receiptEntity.ReceiptPositions.Add(new()
+                {
+                    Product = new() { Title = item.Name },
+                    Count = item.Quantity,
+                    Price = item.Price
+                });
+            }
+            try
+            {
+                using (DatabaseContext db = new())
+                {
+                    db.Shop.AddIfNotExists(receiptEntity.Shop);
+                    foreach (var position in receiptEntity.ReceiptPositions)
+                    {
+                        db.Product.AddIfNotExists(position.Product);
+                        db.ReceiptPosition.Add(position);
+                    }
+                    db.Receipt.Add(receiptEntity);
+                    db.SaveChanges();
+                }
+            } catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"Ошибка сохренения чека: {ex.Message}");
+            }
+        }
+
         #region Группа методов Get
         public static void GetReceiptList()
         {
@@ -27,12 +68,17 @@ namespace FinAccounting.Database
 
         }
 
-        public static void GetProductList()
+        public static Dictionary<string, long> GetProductIdsByTitleList(List<string> productList)
         {
-
+            Dictionary<string, long> products;
+            using (DatabaseContext db = new DatabaseContext())
+            {
+                products = db.Product.Where(p => productList.Contains(p.Title)).ToDictionary(p => p.Title, p => p.ProductId);
+            }
+            return products;
         }
         /// <summary>
-        /// Поиск товара в базе данных по названию. Регистронезависимый.
+        /// Поиск товара в базе данных по названию. Регистронезависимый. TODO: уточнить про регистр
         /// </summary>
         /// <param name="title">Название товара.</param>
         /// <returns>Объект товара.</returns>
@@ -41,14 +87,14 @@ namespace FinAccounting.Database
             List<Product> products;
             using (DatabaseContext db = new DatabaseContext())
             {
-                products = db.product.Where(p => p.title== title).ToList();
+                products = db.Product.Where(p => p.Title == title).ToList();
             }
             return products?[0] ?? null;
         }
 
-        public static void GetShop()
+        public static long GetShopId(string title)
         {
-
+            return -1;
         }
         #endregion
 
@@ -61,29 +107,29 @@ namespace FinAccounting.Database
         /// <param name="datetime">Время выполнения операции</param>
         /// <param name="total">Итог по чеку</param>
         /// <returns>ID товара в базе данных</returns>
-        public static long AddReceipt(List<ReceiptPosition> receiptPositions, DateTime datetime, double total)
+        public static long AddReceipt(List<ReceiptPosition> receiptPositions, DateTime datetime, decimal total)
         {
-            Receipt newReceipt = new Receipt() { datetime = datetime, total = total };
+            Tables.Receipt newReceipt = new Tables.Receipt() { Datetime = datetime, Total = total };
             using (DatabaseContext db = new DatabaseContext())
             {
-                db.receipt.Add(newReceipt);
+                db.Receipt.Add(newReceipt);
                 db.SaveChanges();
             }
 
-            AddReceiptPositionRange(receiptPositions, newReceipt.receipt_id);
-            return newReceipt.receipt_id;
+            AddReceiptPositionRange(receiptPositions, newReceipt.ReceiptId);
+            return newReceipt.ReceiptId;
         }
 
         public static void AddReceiptPositionRange(List<ReceiptPosition> receiptPositions, long receipt_id)
         {
             foreach (var receiptPosition in receiptPositions)
             {
-                receiptPosition.receipt_id = receipt_id;
+                receiptPosition.ReceiptId = receipt_id;
             }
 
             using (DatabaseContext db = new DatabaseContext())
             {
-                db.receipt_position.AddRange(receiptPositions);
+                db.ReceiptPosition.AddRange(receiptPositions);
                 db.SaveChanges();
             }
         }
@@ -105,7 +151,7 @@ namespace FinAccounting.Database
         /// <returns>ID товара в базе данных</returns>
         public static long AddProduct(string title)
         {
-            Product newProduct = new Product() { title = title };
+            Product newProduct = new Product() { Title = title };
             return AddProduct(newProduct);
         }
 
@@ -117,18 +163,18 @@ namespace FinAccounting.Database
         /// <returns>ID товара в базе данных</returns>
         public static long AddProduct(Product product)
         {
-            Product? existsProduct = GetProductByTitle(product.title);
+            Product? existsProduct = GetProductByTitle(product.Title);
             if (existsProduct != null)
             {
-                return existsProduct.product_id;
+                return existsProduct.ProductId;
             }
 
             using (DatabaseContext db = new DatabaseContext())
             {
-                db.product.Add(product);
+                db.Product.Add(product);
                 db.SaveChanges();
             }
-            return product.product_id;
+            return product.ProductId;
         }
 
         public static void AddShop()

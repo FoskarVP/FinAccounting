@@ -3,13 +3,13 @@ using System.Net;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FinAccounting.GetReceipt.ProverkachekaAPI
+namespace FinAccounting.APIReceipt
 {
-    internal class Receipt
+    public class Receipt
     {
         public string Organization;
         public DateTime DateTime;
-        public double Total;
+        public decimal Total;
         public List<Item> Items;
 
         public Receipt()

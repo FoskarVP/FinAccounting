@@ -4,16 +4,14 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace FinAccounting.GetReceipt.ProverkachekaAPI
+namespace FinAccounting.APIReceipt.ProverkachekaAPI
 {
     internal static class APIProvider
     {
         private static readonly string URL = "https://proverkacheka.com/";
         private static readonly string POST = "api/v1/check/get";
 
-        private static readonly HttpClient client = new HttpClient();
-
-        public static async Task<Receipt?> GetReceiptByFiscalData(string fn, string fd, string fp, DateTime dateTime, OperationTypeEnum type, double sum)
+        public static async Task<Receipt?> GetReceiptByFiscalData(string fn, string fd, string fp, DateTime dateTime, OperationTypeEnum type, decimal sum)
         {
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(URL);
@@ -51,15 +49,16 @@ namespace FinAccounting.GetReceipt.ProverkachekaAPI
             return ReceiptParse(response);
         }
 
+        // TODO: проверить потом работает или нет
         public static async Task<Receipt?> GetReceiptByQRImage(Image img)
         {
+            HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(URL);
-            HttpContent dictionaryItems = new FormUrlEncodedContent(new Dictionary<string, string>() { { "token", AppSettings.APISettings.Proverkacheka } });
             var imageStream = new MemoryStream();
             img.Save(imageStream, System.Drawing.Imaging.ImageFormat.Jpeg);
             MultipartFormDataContent dataParams = new MultipartFormDataContent
             {
-                { dictionaryItems, "token"},
+                { new StringContent(AppSettings.APISettings.Proverkacheka), "token"},
                 { new StreamContent(imageStream),  "qrfile", "qr.jpeg"}
             };
 
@@ -94,7 +93,7 @@ namespace FinAccounting.GetReceipt.ProverkachekaAPI
                 receipt = new Receipt()
                 {
                     Organization = GetOrganizationName(response["data"]["json"]["retailPlace"], response["data"]["json"]["user"]),
-                    Total = Convert.ToDouble(response["data"]["json"]["totalSum"]) / 100,
+                    Total = Convert.ToDecimal(response["data"]["json"]["totalSum"]) / 100,
                     DateTime = Convert.ToDateTime(response["data"]["json"]["dateTime"])
                 };
 
@@ -103,9 +102,8 @@ namespace FinAccounting.GetReceipt.ProverkachekaAPI
                     receipt.Items.Add(new Item()
                     {
                         Name = GetProductName(item["name"]),
-                        Price = Convert.ToDouble(item["price"]) / 100,
-                        Quantity = Convert.ToDouble(item["quantity"]),
-                        Sum = Convert.ToDouble(item["sum"]) / 100,
+                        Price = Convert.ToDecimal(item["price"]) / 100,
+                        Quantity = Convert.ToDecimal(item["quantity"]),
                     });
                 }
             }

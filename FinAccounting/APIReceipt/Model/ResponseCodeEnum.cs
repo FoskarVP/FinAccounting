@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinAccounting.GetReceipt.ProverkachekaAPI
+namespace FinAccounting.APIReceipt
 {
     public enum ResponseCodeEnum
     {

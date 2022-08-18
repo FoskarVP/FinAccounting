@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinAccounting.GetReceipt.ProverkachekaAPI
+namespace FinAccounting.APIReceipt
 {
-    internal class Item
+    public class Item
     {
         public string Name;
-        public double Price;
-        public double Quantity;
-        public double Sum;
+        public decimal Price;
+        public decimal Quantity;
     }
 }
