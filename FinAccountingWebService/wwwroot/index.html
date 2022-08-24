@@ -32,7 +32,7 @@
 
     <!--Requisits-->
     <div style="position: relative; top: 50px; left: 50px;">
-        <form name="recieptRequisits" method="post" enctype="application/x-www-form-urlencoded">
+        <form name="receiptRequisits" method="post" enctype="application/x-www-form-urlencoded">
             <div>
                 <label>ФН</label><input type="text" name="fiscalStorage" placeholder="Номер фискального накопителя" maxlength="16" required />
             </div>
@@ -51,7 +51,7 @@
             </div>
             <div>
                 <label>Вид чека</label>
-                <select name="recieptType" required>
+                <select name="receiptType" required>
                     <option value>Выберите вид</option>
                     <option value="1">Приход</option>
                     <option value="2">Возврат прихода</option>
@@ -113,9 +113,9 @@
     </script>
 
     <script>
-        async function recieptByRequesits(storage, doc, attribute, date, total, time, type) {
+        async function receiptByRequesits(storage, doc, attribute, date, total, time, type) {
 
-            const response = await fetch("api/reciept/recieptByRequisits", {
+            const response = await fetch("api/receipt/receiptByRequisits", {
                 method: "POST",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -124,13 +124,13 @@
                     fiscalAttribute: attribute,
                     dateTime: date + 'T' + time,
                     total: total,
-                    recieptType: type
+                    receiptType: type
                 })
             });
             if (response.ok) {
-                const reciept = await response.json();
-                console.log(reciept);
-                $("#answer").html(JSON.stringify(reciept))
+                const receipt = await response.json();
+                console.log(receipt);
+                $("#answer").html(JSON.stringify(receipt))
                 //reset();
                 //document.querySelector("tbody").append(row(user));
             }
@@ -142,33 +142,33 @@
         }
 
         // отправка формы
-        document.forms["recieptRequisits"].addEventListener("submit", e => {
+        document.forms["receiptRequisits"].addEventListener("submit", e => {
             e.preventDefault();
-            const form = document.forms["recieptRequisits"];
+            const form = document.forms["receiptRequisits"];
             const storage = form.elements["fiscalStorage"].value;
             const doc = form.elements["fiscalDocument"].value;
             const attribute = form.elements["fiscalAttribute"].value;
             const total = form.elements["total"].value;
             const date = form.elements["date"].value;
             const time = form.elements["time"].value;
-            const type = form.elements["recieptType"].value;
+            const type = form.elements["receiptType"].value;
 
-            recieptByRequesits(storage, doc, attribute, date, total, time, type);
+            receiptByRequesits(storage, doc, attribute, date, total, time, type);
         });
     </script>
 
     <script>
-        async function recieptByQRRaw(qrraw) {
+        async function receiptByQRRaw(qrraw) {
 
-            const response = await fetch("api/reciept/recieptByQRRaw", {
+            const response = await fetch("api/receipt/receiptByQRRaw", {
                 method: "POST",
                 headers: { "Accept": "text/plain", "Content-Type": "text/plain" },
                 body: qrraw
             });
             if (response.ok) {
-                const reciept = await response.json();
-                console.log(reciept);
-                $("#answer").html(JSON.stringify(reciept))
+                const receipt = await response.json();
+                console.log(receipt);
+                $("#answer").html(JSON.stringify(receipt))
                 //reset();
                 //document.querySelector("tbody").append(row(user));
             }
@@ -183,22 +183,22 @@
             e.preventDefault();
             const raw = document.forms["qrRaw"].elements["raw"].value;
 
-            recieptByQRRaw(raw);
+            receiptByQRRaw(raw);
         });
     </script>
 
     <script>
-        async function recieptByQRUrl(qrUrl) {
+        async function receiptByQRUrl(qrUrl) {
 
-            const response = await fetch("api/reciept/recieptByQRUrl", {
+            const response = await fetch("api/receipt/receiptByQRUrl", {
                 method: "POST",
                 headers: { "Accept": "text/plain", "Content-Type": "text/plain" },
                 body: qrUrl
             });
             if (response.ok) {
-                const reciept = await response.json();
-                console.log(reciept);
-                $("#answer").html(JSON.stringify(reciept))
+                const receipt = await response.json();
+                console.log(receipt);
+                $("#answer").html(JSON.stringify(receipt))
             }
             else {
                 const error = await response.json();
@@ -211,24 +211,24 @@
             e.preventDefault();
             const raw = document.forms["qrUrl"].elements["url"].value;
 
-            recieptByQRUrl(raw);
+            receiptByQRUrl(raw);
         });
     </script>
 
 <!--    <script>
-        async function recieptByQRImage(qrImage) {
+        async function receiptByQRImage(qrImage) {
             const formData = new FormData();
             formData.append('file', qrImage);
 
-            const response = await fetch("api/reciept/recieptByQRImage", {
+            const response = await fetch("api/receipt/receiptByQRImage", {
                 method: "POST",
                 //headers: { "Accept": "text/plain", "Content-Type": "text/plain" },
                 body: formData
             });
             if (response.ok) {
-                const reciept = await response.json();
-                console.log(reciept);
-                $("#answer").html(JSON.stringify(reciept))
+                const receipt = await response.json();
+                console.log(receipt);
+                $("#answer").html(JSON.stringify(receipt))
             }
             else {
                 const error = await response.json();
@@ -241,18 +241,18 @@
             e.preventDefault();
             const image = document.forms["qrImage"].elements["image"].files[0];
 
-            recieptByQRImage(image);
+            receiptByQRImage(image);
         });
     </script>-->
     <script>
-        async function recieptByQRImage(qrImage) {
+        async function receiptByQRImage(qrImage) {
 
             var r = new FileReader();
 
             r.onloadend = async function (e) {
                 var arr = Array.from(new Uint8Array(e.target.result));
 
-                const response = await fetch("api/reciept/recieptByQRImage", {
+                const response = await fetch("api/receipt/receiptByQRImage", {
                     method: "POST",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -260,9 +260,9 @@
                     })
                 });
                 if (response.ok) {
-                    const reciept = await response.json();
-                    console.log(reciept);
-                    $("#answer").html(JSON.stringify(reciept))
+                    const receipt = await response.json();
+                    console.log(receipt);
+                    $("#answer").html(JSON.stringify(receipt))
                     //reset();
                     //document.querySelector("tbody").append(row(user));
                 }
@@ -281,17 +281,8 @@
             e.preventDefault();
             const image = document.forms["qrImage"].elements["image"].files[0];
 
-            recieptByQRImage(image);
+            receiptByQRImage(image);
         });
     </script>
-    <!--
-        const image = document.forms["qrImage"].elements["image"].files[0];
-    const formData = new FormData();
-    formData.append('file', image);
-    const response = await fetch("api/reciept/recieptByQRImage", {
-    method: "POST",
-    body: formData
-    });
-        -->
 </body>
 </html>

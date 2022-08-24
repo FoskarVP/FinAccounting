@@ -1,4 +1,5 @@
-﻿using FinAccountingWebService.APIReceipt.ProverkachekaAPI;
+﻿using FinAccountingWebService.Database;
+using FinAccountingWebService.APIReceipt.ProverkachekaAPI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
@@ -10,27 +11,33 @@ namespace FinAccountingWebService.APIControllers.Receipt
     [ApiController]
     public class ReceiptController : ControllerBase
     {
-        [HttpPost("recieptByRequisits")]
+        [HttpPost("receiptByRequisits")]
         public APIReceipt.Receipt ReceiptByRequisits(ReceiptRequesits requisits)
         {
-            return APIProvider.GetReceiptByFiscalData(requisits.FiscalStorage,
+            var receipt = APIProvider.GetReceiptByFiscalData(requisits.FiscalStorage,
                                                       requisits.FiscalDocument,
                                                       requisits.FiscalAttribute,
                                                       requisits.DateTime,
                                                       requisits.ReceiptType,
                                                       requisits.Total).Result;
+            DatabaseProvider.SaveReceipt(receipt);
+            return receipt;
         }
 
-        [HttpPost("recieptByQRRaw")]
+        [HttpPost("receiptByQRRaw")]
         public APIReceipt.Receipt ReceiptByQRRaw([FromBody] string qrraw)
         {
-            return APIProvider.GetReceiptByQRRaw(qrraw).Result;
+            var receipt = APIProvider.GetReceiptByQRRaw(qrraw).Result;
+            DatabaseProvider.SaveReceipt(receipt);
+            return receipt;
         }
 
-        [HttpPost("recieptByQRUrl")]
+        [HttpPost("receiptByQRUrl")]
         public APIReceipt.Receipt ReceiptByQRUrl([FromBody] string qrUrl)
         {
-            return APIProvider.GetReceiptByQRUrl(qrUrl).Result;
+            var receipt = APIProvider.GetReceiptByQRUrl(qrUrl).Result;
+            DatabaseProvider.SaveReceipt(receipt);
+            return receipt;
         }
     }
 }

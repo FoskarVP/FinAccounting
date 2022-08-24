@@ -18,9 +18,9 @@
             Host = host;
             Database = database;
             Username = username;
-            Password = password;
-            Port = port;
-            Schema = schema;
+            Password = password ?? "";
+            Port = port ?? "5432";
+            Schema = schema ?? "public";
         }
     }
 }

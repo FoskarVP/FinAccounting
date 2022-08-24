@@ -22,7 +22,7 @@ namespace FinAccountingWebService.Database
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql($"Host={AppSettings.DBSettings.Host};Port={AppSettings.DBSettings.Port};Database={AppSettings.DBSettings.Database};Username={AppSettings.DBSettings.Username};Password={AppSettings.DBSettings.Password}");
-            optionsBuilder.LogTo(System.Console.WriteLine);
+            optionsBuilder.LogTo(System.Console.WriteLine, LogLevel.Warning);
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -57,9 +57,6 @@ namespace FinAccountingWebService.Database
                         i.Property(rp => rp.Count).HasDefaultValue(0m);
                         i.HasKey(rp => new { rp.ReceiptId, rp.ProductId });
                     });
-
-
-
         }
     }
 }

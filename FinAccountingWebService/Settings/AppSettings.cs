@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using FinAccountingWebService.Database;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Npgsql;
 
 namespace FinAccountingWebService
 {
@@ -19,8 +21,14 @@ namespace FinAccountingWebService
                                  configuration.GetValue<string>("Database:Port"),
                                  configuration.GetValue<string>("Database:Schema"));
                 APISettings = new(configuration.GetValue<string>("ApiToken:Proverkacheka"));
+
                 CheckDatabaseSettings();
                 CheckAPISettings();
+
+                if (!CheckDatabaseConnection())
+                {
+                    throw new NpgsqlException("Ошибка подключения к базе данных");
+                }
             }
             catch (NullReferenceException ex)
             {
@@ -69,6 +77,11 @@ namespace FinAccountingWebService
                 throw new FileLoadException(errorMessage.Trim());
             }
             return true;
+        }
+
+        private static bool CheckDatabaseConnection()
+        {
+            return DatabaseProvider.CheckConnection();
         }
     }
 }

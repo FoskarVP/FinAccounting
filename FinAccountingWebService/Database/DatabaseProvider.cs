@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using FinAccountingWebService.Database.Tables;
-using FinAccountingWebService.APIReceipt;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinAccountingWebService.Database
@@ -47,6 +46,12 @@ namespace FinAccountingWebService.Database
             {
                 Console.WriteLine($"Ошибка сохренения чека: {ex.Message}");
             }
+        }
+
+        public static bool CheckConnection()
+        {
+            using DatabaseContext db = new();
+            return db.Database.CanConnect();
         }
 
         #region Группа методов Get
