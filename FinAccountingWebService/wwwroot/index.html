@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Управление финансами</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.9/jquery.mask.min.js"></script>
+</head>
+<body>
+    <nav>
+        <ul class="mainmenu">
+            <li>
+                <a href="/" class="active">Главная<span class="fa fa-angle-down"></span></a>
+                <!--<ul class="submenu">
+                    <li><a href="">меню второго уровня</a></li>
+                    <li>
+                        <a href="">меню второго уровня<span class="fa fa-angle-down"></span></a>
+                        <ul class="submenu">
+                            <li><a href="">меню третьего уровня</a></li>
+                            <li><a href="">меню третьего уровня</a></li>
+                            <li><a href="">меню третьего уровня</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="">меню второго уровня</a></li>
+                </ul>-->
+            </li>
+            <li><a href="/statistic">Статистика</a></li>
+        </ul>
+    </nav>
+    <label style="color:red" id="answer">ANSWER</label>
+
+    <!--Requisits-->
+    <div style="position: relative; top: 50px; left: 50px;">
+        <form name="recieptRequisits" method="post" enctype="application/x-www-form-urlencoded">
+            <div>
+                <label>ФН</label><input type="text" name="fiscalStorage" placeholder="Номер фискального накопителя" maxlength="16" required />
+            </div>
+            <div>
+                <label>ФД</label><input type="text" name="fiscalDocument" placeholder="Номер фискального документа" maxlength="10" required />
+            </div>
+            <div>
+                <label>ФП</label><input type="text" name="fiscalAttribute" placeholder="Фискальный признак документа" maxlength="10" required />
+            </div>
+            <div>
+                <label>Итог</label><input type="number" name="total" placeholder="Сумма чека" required step="0.01" />
+            </div>
+            <div>
+                <label>Дата</label><input type="date" name="date" placeholder="дд.мм.гггг" maxlength="16" required />
+                <label>Время</label><input type="time" name="time" placeholder="--:--" maxlength="16" required />
+            </div>
+            <div>
+                <label>Вид чека</label>
+                <select name="recieptType" required>
+                    <option value>Выберите вид</option>
+                    <option value="1">Приход</option>
+                    <option value="2">Возврат прихода</option>
+                    <option value="3">Расход</option>
+                    <option value="4">Возврат расхода</option>
+                </select>
+            </div>
+            <button type="submit" style="width: 80px; height: 30px;">Submit</button>
+        </form>
+    </div>
+
+    <!--QRRaw-->
+    <div style="position: relative; top: 100px; left: 150px;">
+        <form name="qrRaw" method="post" enctype="application/x-www-form-urlencoded">
+            <div>
+                <label>Строка QR-кода</label><textarea type="text" id="raw" name="raw" cols="100" rows="3" placeholder="Содержимое QR-кода" required>t=20220727T1157&s=5750.00&fn=9287440300906573&i=12896&fp=1927570358&n=1</textarea>
+            </div>
+            <div>Пример: t=20220727T1157&s=5750.00&fn=9287440300906573&i=12896&fp=1927570358&n=1</div>
+
+            <br />
+            <button type="submit" style="width: 80px; height: 30px;">Submit</button>
+        </form>
+
+    </div>
+
+    <!--QRUrl-->
+    <div style="position: relative; top: 150px; left: 150px;">
+        <form name="qrUrl" method="post" enctype="application/x-www-form-urlencoded">
+            <div>
+                <label>Строка QR-кода</label><textarea type="text" name="url" cols="100" rows="3" placeholder="Ссылка на QR-код" required>https://proxy.imgsmail.ru/?e=1661503195&email=s.polonski%40mail.ru&flags=0&h=NRvf52V_LZwxRmQJH2E5RA&is_https=1&url173=b25saW5lLnNiaXMucnUvdmVkL3NlcnZpY2UvP2lkPTAmbWV0aG9kPUJhcmNvZGUuR2VuZXJhdGVUb1JwYyZwcm90b2NvbD02JnBhcmFtcz1leUpRWVhKaGJYTWlPbnNpWmlJNk1Dd2laQ0k2V3lJak9UazVPVGs1SWl3aWRISmhibk53WVhKbGJuUWlMREpkTENKeklqcGJleUp1SWpvaVJISmhkME52Ykc5eUlpd2lkQ0k2SXRDaDBZTFJnTkMlMkIwTHJRc0NKOUxIc2liaUk2SWtKaFkydG5jbTkxYm1SRGIyeHZjaUlzSW5RaU9pTFFvZEdDMFlEUXZ0QzYwTEFpZlN4N0ltNGlPaUpQZFhSd2RYUlVlWEJsSWl3aWRDSTZJdENuMExqUmdkQzcwTDRnMFliUXRkQzcwTDdRdFNKOVhTd2lYM1I1Y0dVaU9pSnlaV052Y21RaWZTd2lWSGx3WlNJNklsRlNJaXdpVm1Gc2RXVWlPaUowUFRJd01qSXdOek13VkRFME5UWXdNQ1p6UFRFME9UWXVNREFtWm00OU9USTROelEwTURNd01EazVOemszTVNacFBUY3dNamN4Sm1ad1BUUXhNRE0yTnpVMU9Ua21iajB4SW4wJTNE</textarea>
+            </div>
+
+            <br />
+            <button type="submit" style="width: 80px; height: 30px;">Submit</button>
+        </form>
+
+    </div>
+
+    <!--QRImage-->
+    <div style="position: relative; top: 200px; left: 150px;">
+        <form name="qrImage" method="post" enctype="application/x-www-form-urlencoded">
+            <div>
+                <label>Изображение QR-кода</label>
+                <input type="file" name="image" required />
+                <br />
+                <button type="submit" style="width: 80px; height: 30px;">Submit</button>
+        </form>
+
+    </div>
+
+
+
+    <script>
+        $(function () {
+            $('input[name="fiscalStorage"]').mask("9999999999999999");
+            $('input[name="fiscalDocument"]').mask("9999999999");
+            $('input[name="fiscalAttribute"]').mask("9999999999999999");
+        });
+    </script>
+
+    <script>
+        async function recieptByRequesits(storage, doc, attribute, date, total, time, type) {
+
+            const response = await fetch("api/reciept/recieptByRequisits", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    fiscalStorage: storage,
+                    fiscalDocument: doc,
+                    fiscalAttribute: attribute,
+                    dateTime: date + 'T' + time,
+                    total: total,
+                    recieptType: type
+                })
+            });
+            if (response.ok) {
+                const reciept = await response.json();
+                console.log(reciept);
+                $("#answer").html(JSON.stringify(reciept))
+                //reset();
+                //document.querySelector("tbody").append(row(user));
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+                alert(error.message);
+            }
+        }
+
+        // отправка формы
+        document.forms["recieptRequisits"].addEventListener("submit", e => {
+            e.preventDefault();
+            const form = document.forms["recieptRequisits"];
+            const storage = form.elements["fiscalStorage"].value;
+            const doc = form.elements["fiscalDocument"].value;
+            const attribute = form.elements["fiscalAttribute"].value;
+            const total = form.elements["total"].value;
+            const date = form.elements["date"].value;
+            const time = form.elements["time"].value;
+            const type = form.elements["recieptType"].value;
+
+            recieptByRequesits(storage, doc, attribute, date, total, time, type);
+        });
+    </script>
+
+    <script>
+        async function recieptByQRRaw(qrraw) {
+
+            const response = await fetch("api/reciept/recieptByQRRaw", {
+                method: "POST",
+                headers: { "Accept": "text/plain", "Content-Type": "text/plain" },
+                body: qrraw
+            });
+            if (response.ok) {
+                const reciept = await response.json();
+                console.log(reciept);
+                $("#answer").html(JSON.stringify(reciept))
+                //reset();
+                //document.querySelector("tbody").append(row(user));
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+                alert(error.message);
+            }
+        }
+
+        document.forms["qrRaw"].addEventListener("submit", e => {
+            e.preventDefault();
+            const raw = document.forms["qrRaw"].elements["raw"].value;
+
+            recieptByQRRaw(raw);
+        });
+    </script>
+
+    <script>
+        async function recieptByQRUrl(qrUrl) {
+
+            const response = await fetch("api/reciept/recieptByQRUrl", {
+                method: "POST",
+                headers: { "Accept": "text/plain", "Content-Type": "text/plain" },
+                body: qrUrl
+            });
+            if (response.ok) {
+                const reciept = await response.json();
+                console.log(reciept);
+                $("#answer").html(JSON.stringify(reciept))
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+                alert(error.message);
+            }
+        }
+
+        document.forms["qrUrl"].addEventListener("submit", e => {
+            e.preventDefault();
+            const raw = document.forms["qrUrl"].elements["url"].value;
+
+            recieptByQRUrl(raw);
+        });
+    </script>
+
+<!--    <script>
+        async function recieptByQRImage(qrImage) {
+            const formData = new FormData();
+            formData.append('file', qrImage);
+
+            const response = await fetch("api/reciept/recieptByQRImage", {
+                method: "POST",
+                //headers: { "Accept": "text/plain", "Content-Type": "text/plain" },
+                body: formData
+            });
+            if (response.ok) {
+                const reciept = await response.json();
+                console.log(reciept);
+                $("#answer").html(JSON.stringify(reciept))
+            }
+            else {
+                const error = await response.json();
+                console.log(error.message);
+                alert(error.message);
+            }
+        }
+
+        document.forms["qrImage"].addEventListener("submit", e => {
+            e.preventDefault();
+            const image = document.forms["qrImage"].elements["image"].files[0];
+
+            recieptByQRImage(image);
+        });
+    </script>-->
+    <script>
+        async function recieptByQRImage(qrImage) {
+
+            var r = new FileReader();
+
+            r.onloadend = async function (e) {
+                var arr = Array.from(new Uint8Array(e.target.result));
+
+                const response = await fetch("api/reciept/recieptByQRImage", {
+                    method: "POST",
+                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        ImageBytes: arr
+                    })
+                });
+                if (response.ok) {
+                    const reciept = await response.json();
+                    console.log(reciept);
+                    $("#answer").html(JSON.stringify(reciept))
+                    //reset();
+                    //document.querySelector("tbody").append(row(user));
+                }
+                else {
+                    const error = await response.json();
+                    console.log(error.message);
+                    alert(error.message);
+                }
+            }
+
+            r.readAsArrayBuffer(qrImage);
+
+        }
+
+        document.forms["qrImage"].addEventListener("submit", e => {
+            e.preventDefault();
+            const image = document.forms["qrImage"].elements["image"].files[0];
+
+            recieptByQRImage(image);
+        });
+    </script>
+    <!--
+        const image = document.forms["qrImage"].elements["image"].files[0];
+    const formData = new FormData();
+    formData.append('file', image);
+    const response = await fetch("api/reciept/recieptByQRImage", {
+    method: "POST",
+    body: formData
+    });
+        -->
+</body>
+</html>
