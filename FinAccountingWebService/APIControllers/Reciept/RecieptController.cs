@@ -32,11 +32,5 @@ namespace FinAccountingWebService.APIControllers.Reciept
         {
             return APIProvider.GetReceiptByQRUrl(qrUrl).Result;
         }
-
-        [HttpPost("recieptByQRImage")]
-        public APIReciept.Reciept RecieptByQRImageStream()
-        {
-            return APIProvider.GetReceiptByQRImageStream(Request.Body).Result;
-        }
     }
 }
