@@ -4,14 +4,14 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace FinAccountingWebService.APIReciept.ProverkachekaAPI
+namespace FinAccountingWebService.APIReceipt.ProverkachekaAPI
 {
     internal static class APIProvider
     {
         private static readonly string URL = "https://proverkacheka.com/";
         private static readonly string POST = "api/v1/check/get";
 
-        public static async Task<Reciept?> GetReceiptByFiscalData(string fn, string fd, string fp, DateTime dateTime, int type, decimal sum)
+        public static async Task<Receipt?> GetReceiptByFiscalData(string fn, string fd, string fp, DateTime dateTime, int type, decimal sum)
         {
             using HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(URL);
@@ -30,10 +30,10 @@ namespace FinAccountingWebService.APIReciept.ProverkachekaAPI
             var result = await client.PostAsync(POST, dataParams);
             JObject response = JObject.Parse(await result.Content.ReadAsStringAsync());
 
-            return RecieptParse(response);
+            return ReceiptParse(response);
         }
 
-        public static async Task<Reciept?> GetReceiptByQRRaw(string qrraw)
+        public static async Task<Receipt?> GetReceiptByQRRaw(string qrraw)
         {
             using HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(URL);
@@ -46,10 +46,10 @@ namespace FinAccountingWebService.APIReciept.ProverkachekaAPI
             var result = await client.PostAsync(POST, dataParams);
             JObject response = JObject.Parse(await result.Content.ReadAsStringAsync());
 
-            return RecieptParse(response);
+            return ReceiptParse(response);
         }
 
-        public static async Task<Reciept?> GetReceiptByQRUrl(string qrurl)
+        public static async Task<Receipt?> GetReceiptByQRUrl(string qrurl)
         {
             using HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(URL);
@@ -62,16 +62,16 @@ namespace FinAccountingWebService.APIReciept.ProverkachekaAPI
             var result = await client.PostAsync(POST, dataParams);
             JObject response = JObject.Parse(await result.Content.ReadAsStringAsync());
 
-            return RecieptParse(response);
+            return ReceiptParse(response);
         }
 
-        private static Reciept? RecieptParse(JObject response)
+        private static Receipt? ReceiptParse(JObject response)
         {
-            Reciept? receipt = null;
+            Receipt? receipt = null;
 
             if (response != null && (ResponseCodeEnum)(short)response["code"] == ResponseCodeEnum.Success)
             {
-                receipt = new Reciept()
+                receipt = new Receipt()
                 {
                     Organization = GetOrganizationName(response["data"]["json"]["retailPlace"], response["data"]["json"]["user"]),
                     Total = Convert.ToDecimal(response["data"]["json"]["totalSum"]) / 100,

@@ -1,34 +1,34 @@
-﻿using FinAccountingWebService.APIReciept.ProverkachekaAPI;
+﻿using FinAccountingWebService.APIReceipt.ProverkachekaAPI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
 using System.Text;
 
-namespace FinAccountingWebService.APIControllers.Reciept
+namespace FinAccountingWebService.APIControllers.Receipt
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RecieptController : ControllerBase
+    public class ReceiptController : ControllerBase
     {
         [HttpPost("recieptByRequisits")]
-        public APIReciept.Reciept RecieptByRequisits(RecieptRequesits requisits)
+        public APIReceipt.Receipt ReceiptByRequisits(ReceiptRequesits requisits)
         {
             return APIProvider.GetReceiptByFiscalData(requisits.FiscalStorage,
                                                       requisits.FiscalDocument,
                                                       requisits.FiscalAttribute,
                                                       requisits.DateTime,
-                                                      requisits.RecieptType,
+                                                      requisits.ReceiptType,
                                                       requisits.Total).Result;
         }
 
         [HttpPost("recieptByQRRaw")]
-        public APIReciept.Reciept RecieptByQRRaw([FromBody] string qrraw)
+        public APIReceipt.Receipt ReceiptByQRRaw([FromBody] string qrraw)
         {
             return APIProvider.GetReceiptByQRRaw(qrraw).Result;
         }
 
         [HttpPost("recieptByQRUrl")]
-        public APIReciept.Reciept RecieptByQRUrl([FromBody] string qrUrl)
+        public APIReceipt.Receipt ReceiptByQRUrl([FromBody] string qrUrl)
         {
             return APIProvider.GetReceiptByQRUrl(qrUrl).Result;
         }

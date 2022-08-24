@@ -23,6 +23,6 @@ app.MapControllers();
 
 //app.MapGet("/", () => "Hello World!");
 
-//app.MapPost("/api/recieptByRequisits", async (context) => await RecieptByRequisits(context));
+//app.MapPost("/api/recieptByRequisits", async (context) => await ReceiptByRequisits(context));
 
 app.Run();

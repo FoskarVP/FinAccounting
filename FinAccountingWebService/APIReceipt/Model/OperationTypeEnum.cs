@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinAccountingWebService.APIReciept
+namespace FinAccountingWebService.APIReceipt
 {
     internal enum OperationTypeEnum
     {

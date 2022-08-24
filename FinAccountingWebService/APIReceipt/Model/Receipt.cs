@@ -3,16 +3,16 @@ using System.Net;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FinAccountingWebService.APIReciept
+namespace FinAccountingWebService.APIReceipt
 {
-    public class Reciept
+    public class Receipt
     {
         public string Organization { get; set; }
         public DateTime DateTime { get; set; }
         public decimal Total { get; set; }
         public List<Item> Items { get; set; }
 
-        public Reciept()
+        public Receipt()
         {
             Items = new List<Item>();
         }

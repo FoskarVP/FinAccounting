@@ -5,14 +5,14 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using FinAccountingWebService.Database.Tables;
-using FinAccountingWebService.APIReciept;
+using FinAccountingWebService.APIReceipt;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinAccountingWebService.Database
 {
     public static class DatabaseProvider
     {
-        public static void SaveReceipt(APIReciept.Reciept receipt)
+        public static void SaveReceipt(APIReceipt.Receipt receipt)
         {
             Tables.Receipt receiptEntity = new()
             {
