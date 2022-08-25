@@ -117,7 +117,7 @@ namespace FinAccountingWebService.APIReceipt.ProverkachekaAPI
             //удаляем:
             //1) из начала названия  - * или #
             //2) из конца названия - вес продукта
-            Regex regWeightAndTechnicalSymbols = new Regex("^(\\*|#)|(\\d+(\\.|\\,))?\\d+\\s?(кг|к|мл|г|гр|%|шт)", RegexOptions.IgnoreCase);
+            Regex regWeightAndTechnicalSymbols = new Regex("^(\\*|#)|(\\d+(\\.|\\,))?\\d+\\s?(кг|к|мл|л|г|гр|%|шт)", RegexOptions.IgnoreCase);
             name = regWeightAndTechnicalSymbols.Replace(name, "");
 
             //удаляем указание упаковки (п/уп или пл/уп и пр.)

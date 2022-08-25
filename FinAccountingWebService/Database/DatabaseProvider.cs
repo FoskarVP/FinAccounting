@@ -15,36 +15,51 @@ namespace FinAccountingWebService.Database
         {
             if (receipt is null) return;
 
-            Tables.Receipt receiptEntity = new()
-            {
-                Datetime = receipt.DateTime.ToUniversalTime(),
-                Shop = new() { Title = receipt.Organization },
-                Total = receipt.Total
-            };
-
-            foreach (var item in receipt.Items)
-            {
-                receiptEntity.ReceiptPositions.Add(new()
-                {
-                    Product = new() { Title = item.Name },
-                    Count = item.Quantity,
-                    Price = item.Price
-                });
-            }
             try
             {
-                using (DatabaseContext db = new())
+                using DatabaseContext db = new();
+
+                Shop shop = new() { Title = receipt.Organization };
+                db.Shop.AddIfNotExists(ref shop, (sh) => shop.Title == sh.Title);
+
+                Tables.Receipt receiptEntity = new()
                 {
-                    db.Shop.AddIfNotExists(receiptEntity.Shop);
-                    foreach (var position in receiptEntity.ReceiptPositions)
+                    Datetime = receipt.DateTime.ToUniversalTime(),
+                    Shop = shop,
+                    ShopId = shop.ShopId,
+                    Total = receipt.Total
+                };
+
+                foreach (var item in receipt.Items)
+                {
+                    Product product = new() { Title = item.Name };
+                    db.Product.AddIfNotExists(ref product, (pr) => product.Title == pr.Title);
+
+                    ReceiptPosition position = new()
                     {
-                        db.Product.AddIfNotExists(position.Product);
-                        db.ReceiptPosition.Add(position);
-                    }
-                    db.Receipt.Add(receiptEntity);
+                        Product = product,
+                        Count = item.Quantity,
+                        Price = item.Price
+                    };
+                    db.ReceiptPosition.Add(position);
+                    receiptEntity.ReceiptPositions.Add(position);
+
+                }
+
+                db.Receipt.AddIfNotExists(ref receiptEntity, (rec) => receiptEntity.Datetime == rec.Datetime
+                                                                      && receiptEntity.Total == rec.Total
+                                                                      && receiptEntity.ShopId == rec.ShopId);
+
+                if (receiptEntity.ReceiptId == 0)
+                {
                     db.SaveChanges();
                 }
-            } catch (DbUpdateException ex)
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"Ошибка сохренения чека в базу: {ex.Message}");
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка сохренения чека: {ex.Message}");
             }

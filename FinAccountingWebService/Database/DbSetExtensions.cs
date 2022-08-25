@@ -1,19 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
-using System.Linq.Expressions;
 
 namespace FinAccountingWebService.Database
 {
     public static class DbSetExtensions
     {
-        public static void AddIfNotExists<T>(this DbSet<T> dbSet, T entity) 
+        public static void AddIfNotExists<T>(this DbSet<T> dbSet, ref T entity, System.Linq.Expressions.Expression<Func<T, bool>> predicate = null)
             where T : class, new()
         {
-            var exists = dbSet.Any(el => entity.Equals(el));
+            var existsElement = predicate != null ? dbSet.FirstOrDefault(predicate) : null;
 
-            if (!exists)
+            if (existsElement != null)
+            {
+                entity = existsElement;
+            }
+            else
+            {
                 dbSet.Add(entity);
+            }
         }
     }
 }

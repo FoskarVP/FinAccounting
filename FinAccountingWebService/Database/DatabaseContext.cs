@@ -22,7 +22,7 @@ namespace FinAccountingWebService.Database
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql($"Host={AppSettings.DBSettings.Host};Port={AppSettings.DBSettings.Port};Database={AppSettings.DBSettings.Database};Username={AppSettings.DBSettings.Username};Password={AppSettings.DBSettings.Password}");
-            optionsBuilder.LogTo(System.Console.WriteLine, LogLevel.Information);
+            optionsBuilder.LogTo(System.Console.WriteLine, LogLevel.Trace);
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
