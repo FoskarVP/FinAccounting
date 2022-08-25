@@ -13,6 +13,8 @@ namespace FinAccountingWebService.Database
     {
         public static void SaveReceipt(APIReceipt.Receipt receipt)
         {
+            if (receipt is null) return;
+
             Tables.Receipt receiptEntity = new()
             {
                 Datetime = receipt.DateTime.ToUniversalTime(),

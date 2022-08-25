@@ -3,6 +3,7 @@ using System.Drawing;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace FinAccountingWebService.APIReceipt.ProverkachekaAPI
 {
@@ -96,18 +97,46 @@ namespace FinAccountingWebService.APIReceipt.ProverkachekaAPI
         {
             Regex regex = new Regex("[a-zA-Zа-яА-ЯеЁ&]+");
             MatchCollection matches = regex.Matches(retailPlace.ToString());
-            return matches.Count > 0 ? retailPlace.ToString() : user.ToString();
+            string orgName = matches.Count > 0 ? retailPlace.ToString() : user.ToString();
+
+            if (orgName.Contains("Пятерочка"))
+            {
+                orgName = "Пятерочка";
+            }
+
+            Regex regMultipleSpaces = new Regex("\\s{2,}");
+            orgName = regMultipleSpaces.Replace(orgName, " ");
+
+            return orgName;
         }
 
         private static string GetProductName(JToken productName)
         {
             string name = productName.ToString().Trim();
-            if (name[0] == '#')
-            {
-                name = name.Substring(1);
-            }
 
-            return name;
+            //удаляем:
+            //1) из начала названия  - * или #
+            //2) из конца названия - вес продукта
+            Regex regWeightAndTechnicalSymbols = new Regex("^(\\*|#)|(\\d+(\\.|\\,))?\\d+\\s?(кг|к|мл|г|гр|%|шт)", RegexOptions.IgnoreCase);
+            name = regWeightAndTechnicalSymbols.Replace(name, "");
+
+            //удаляем указание упаковки (п/уп или пл/уп и пр.)
+            Regex regPack = new Regex("\\w{1,3}/\\w{1,3}");
+            name = regPack.Replace(name, "");
+
+            Regex regBrackets = new Regex("(\\(\\w*(\\s\\w+)?\\)?.?)$");
+            name = regBrackets.Replace(name, "");
+
+            Regex regDigitsEnd = new Regex("(\\d*(\\.|\\,?)\\d+)$");
+            name = regDigitsEnd.Replace(name, "");
+
+            Regex regMultipleSpaces = new Regex("\\s{2,}");
+            name = regMultipleSpaces.Replace(name, " ");
+
+            Regex regMultipleDots = new Regex("\\.{2,}");
+            name = regMultipleDots.Replace(name, ".");
+
+            return name.Trim();
         }
     }
 }

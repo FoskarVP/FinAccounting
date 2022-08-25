@@ -10,7 +10,7 @@ namespace FinAccountingWebService.Database
         public static void AddIfNotExists<T>(this DbSet<T> dbSet, T entity) 
             where T : class, new()
         {
-            var exists = dbSet.Any(el => el.Equals(entity));
+            var exists = dbSet.Any(el => entity.Equals(el));
 
             if (!exists)
                 dbSet.Add(entity);
